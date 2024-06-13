@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model contacts {
+  contact_id   Int       @id @default(autoincrement())
+  user_id      Int?
+  name         String    @db.VarChar(100)
+  email        String    @db.VarChar(100)
+  message      String
+  contact_date DateTime? @default(now()) @db.Timestamp(6)
+  users        users?    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model project_skills {
+  project_id Int
+  skill_id   Int
+  projects   projects @relation(fields: [project_id], references: [project_id], onDelete: Cascade, onUpdate: NoAction)
+  skills     skills   @relation(fields: [skill_id], references: [skill_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([project_id, skill_id])
+}
+
+model projects {
+  project_id      Int              @id @default(autoincrement())
+  user_id         Int?
+  title           String           @db.VarChar(255)
+  description     String?
+  project_url     String?          @db.VarChar(255)
+  picture_project String?          @db.VarChar(255)
+  start_date      DateTime?        @db.Date
+  end_date        DateTime?        @db.Date
+  is_active       Boolean?         @default(true)
+  project_skills  project_skills[]
+  users           users?           @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model skills {
+  skill_id          Int              @id @default(autoincrement())
+  user_id           Int?
+  skill_name        String           @db.VarChar(100)
+  picture_skill     String           @db.VarChar(255)
+  proficiency_level String?          @db.VarChar(50)
+  project_skills    project_skills[]
+  users             users?           @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model users {
+  user_id         Int        @id @default(autoincrement())
+  name            String     @db.VarChar(100)
+  email           String     @unique @db.VarChar(100)
+  bio             String?
+  sub_bio1        String?
+  sub_bio2        String?
+  profile_picture String?    @db.VarChar(255)
+  cv              String?
+  contacts        contacts[]
+  projects        projects[]
+  skills          skills[]
+}
