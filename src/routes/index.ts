@@ -11,6 +11,7 @@ const prisma = new PrismaClient()
 const router = Router();
 
 //router.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
+const projectFolder = 'api-andrialpian';
 
 router.get('/', (req, res) => {
     res.json({ message : 'Hello world!!!'});
@@ -27,11 +28,11 @@ router.post('/addUser', upload.fields([{ name: 'picture', maxCount: 1 }, { name:
         let profileCv: string | undefined;
 
         if (req.files && 'picture' in req.files && req.files['picture']) {
-            profilePicture = (req.files['picture'][0] as Express.Multer.File).path;
+            profilePicture = `${req.protocol}://${req.get('host')}/${projectFolder}/uploads/${(req.files['picture'][0] as Express.Multer.File).filename}`;
         }
 
         if (req.files && 'cv' in req.files && req.files['cv']) {
-            profileCv = (req.files['cv'][0] as Express.Multer.File).path;
+            profileCv = `${req.protocol}://${req.get('host')}/${projectFolder}/${(req.files['cv'][0] as Express.Multer.File).filename}`;
         }
 
         const newUser = await prisma.users.create({

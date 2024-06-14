@@ -1,10 +1,15 @@
 import multer from "multer";
 import path from "path";
+import dotenv from 'dotenv'
+
+dotenv.config();
+
+const uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, '../../uploads');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '../../uploads' || process.env.UPLOAD_DIR))
-        console.log('Upload directory:', process.env.UPLOAD_DIR); 
+        cb(null, uploadDir);
+        console.log('Upload directory:', uploadDir); 
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
