@@ -10,7 +10,7 @@ dotenv.config
 const prisma = new PrismaClient()
 const router = Router();
 
-//router.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
+router.use('/api-andrialpian/uploads', express.static(path.join(__dirname, process.env.UPLOAD_DIR || '../../uploads')));
 const projectFolder = 'api-andrialpian';
 
 router.get('/', (req, res) => {
