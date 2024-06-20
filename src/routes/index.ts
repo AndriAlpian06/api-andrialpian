@@ -66,7 +66,7 @@ router.get('/user', authenticateToken, async (req: Request, res: Response) => {
 });
 
 // Add User
-router.post('/addUser', authenticateToken, upload.fields([{ name: 'picture', maxCount: 1 }, { name: 'cv', maxCount: 1 }]), async (req:Request, res:Response) => {    
+router.post('/addUser', upload.fields([{ name: 'picture', maxCount: 1 }, { name: 'cv', maxCount: 1 }]), async (req:Request, res:Response) => {    
     console.log('Received fields:', req.body);
     console.log('Received file:', req.files);
 
