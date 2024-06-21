@@ -115,11 +115,11 @@ router.put('/updateUser/:id', authenticateToken, upload.fields([{ name: 'picture
         let profileCv: string | undefined;
 
         if (req.files && 'picture' in req.files && req.files['picture']) {
-            profilePicture = (req.files['picture'][0] as Express.Multer.File).path;
+            profilePicture = `${req.protocol}://${req.get('host')}/${projectFolder}/uploads/${(req.files['picture'][0] as Express.Multer.File).filename}`;
         }
 
         if (req.files && 'cv' in req.files && req.files['cv']) {
-            profileCv = (req.files['cv'][0] as Express.Multer.File).path;
+            profileCv = `${req.protocol}://${req.get('host')}/${projectFolder}/uploads/${(req.files['cv'][0] as Express.Multer.File).filename}`;
         }
 
         const updateUser = await prisma.users.update({
