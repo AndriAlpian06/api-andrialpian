@@ -143,6 +143,67 @@ router.put('/updateUser/:id', authenticateToken, upload.fields([{ name: 'picture
     }
 })
 
+// Skills
+router.get('/skills', authenticateToken, async (req, res) => {
+    const skills = await prisma.skills.findMany();
+
+    res.status(200).json(skills);
+})
+
+// Add Skills
+router.post('/addSkills', authenticateToken, upload.fields([{ name: 'picture_skill', maxCount: 1 }]), async(req, res) => {
+    try{
+        const { user_id, skill_name } = req.body;
+        let pictureSkill: string = ""; 
+
+        if (req.files && 'picture_skill' in req.files && req.files['picture_skill']) {
+            pictureSkill = `${req.protocol}://${req.get('host')}/${projectFolder}/uploads/${(req.files['picture_skill'][0] as Express.Multer.File).filename}`;
+        }
+
+        const addSkills = await prisma.skills.create({
+            data: {
+                user_id: parseInt(user_id),
+                skill_name,
+                picture_skill: pictureSkill
+            }
+        })
+
+        res.status(200).json(addSkills);
+
+    } catch (e){
+        console.log('Gagal add skills')
+    }
+})
+
+// Update Skills
+router.put('/updateSkill/:id', authenticateToken, upload.fields([{ name: 'picture_skill', maxCount: 1 }]), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { user_id, skill_name } = req.body;
+        let pictureSkill: string = "";
+        
+        if (req.files && 'picture_skill' in req.files && req.files['picture_skill']) {
+            pictureSkill = `${req.protocol}://${req.get('host')}/${projectFolder}/uploads/${(req.files['picture_skill'][0] as Express.Multer.File).filename}`;
+        }
+
+        const updateSkill = await prisma.skills.update({
+            where: { skill_id: Number(id) },
+            data: {
+                user_id: parseInt(user_id),
+                skill_name,
+                picture_skill: pictureSkill
+            }
+        })
+
+        res.status(200).json(updateSkill);
+        
+
+    } catch (e){
+        console.log(e)
+        console.log('Gagal update skill')
+    }
+})
+
 router.get('/about', (req, res) => {
     res.json({ message : 'ini data about'})
 })
