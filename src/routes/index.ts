@@ -204,6 +204,112 @@ router.put('/updateSkill/:id', authenticateToken, upload.fields([{ name: 'pictur
     }
 })
 
+// Delete skill
+router.delete('/deleteSkill/:id', async(req, res) => {
+    try{
+        const { id } = req.params;
+
+        const deleteSkill = await prisma.skills.delete({
+            where: { skill_id: Number(id)}
+        })
+
+        res.status(200).json({
+            data: "Data skill dengan id ${id} telah dihapus"
+        })
+        
+    } catch (e){
+        res.status(400).json(e)
+    }
+})
+
+// Show Portfolio
+router.get('/projects', async(req, res) => {
+    const projects = await prisma.projects.findMany();
+
+    res.status(200).json(projects)
+})
+
+// Add Portfolio
+router.post('/addProject', upload.fields([{ name: 'picture_project', maxCount: 1 }]), async (req, res) => {
+    try{
+        const { user_id, title, desc, project_url } = req.body;
+        let pictureProject: string = "";
+
+        if(req.files && 'picture_project' in req.files && req.files['picture_project']){
+            pictureProject = `${req.protocol}://${req.get('host')}/${projectFolder}/uploads/${(req.files['picture_project'][0] as Express.Multer.File).filename}`;
+        }
+        
+        const startDate = new Date();
+        const endDate = new Date();
+        endDate.setDate(startDate.getDate() + 30);
+        
+        const addProject = await prisma.projects.create({
+            data: {
+                user_id: parseInt(user_id),
+                title,
+                description: desc,
+                project_url,
+                picture_project: pictureProject,
+                start_date: startDate,
+                end_date: endDate
+            }
+        })
+
+        res.status(200).json(addProject);
+    } catch (e){
+        // console.log("Gagal add portfolio", e)
+        res.status(400).json(e)
+    } 
+})
+
+// Update Project
+router.put('/updateProject/:id', upload.fields([{ name: 'picture_project', maxCount: 1 }]), async(req, res) => {
+    try{
+        const { id } = req.params;
+        const { user_id, title, desc, project_url } = req.body;
+        let pictureProject: string = "";
+
+        if(req.files && 'picture_project' in req.files && req.files['picture_project']){
+            pictureProject = `${req.protocol}://${req.get('host')}/${projectFolder}/uploads/${(req.files['picture_project'][0] as Express.Multer.File).filename}`;
+        }
+
+        const endDate = new Date();
+
+        const updateProject = await prisma.projects.update({
+            where: { project_id: Number(id)},
+            data: {
+                user_id: parseInt(user_id),
+                title,
+                description: desc,
+                project_url,
+                end_date: endDate
+            }
+        })
+
+        res.status(200).json(updateProject);
+    } catch (e){
+        res.status(400).json(e)
+    }
+})
+
+// Delete Project
+router.delete('/deleteProject/:id', async(req, res) => {
+    try{
+        const { id } = req.params;
+
+        const deleteProject = await prisma.projects.delete({
+            where: { project_id: Number(id)}
+        })
+
+        res.status(200).json({
+            data: `Project dengan id ${id} berhasil di hapus`
+        })
+
+    } catch (e){
+        res.status(400).json(e)
+    }
+})
+
 router.get('/about', (req, res) => {
     res.json({ message : 'ini data about'})
 })

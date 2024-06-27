@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Middleware untuk melayani file statis dari direktori 'uploads'
 app.use('/api-andrialpian/uploads', express.static(path.join(__dirname, process.env.UPLOAD_DIR || '../uploads')));
-console.log('Serving static files from:', path.join(__dirname, '../uploads'));
+//console.log('Serving static files from:', path.join(__dirname, '../uploads'));
 
 app.use('/', routes)
 
